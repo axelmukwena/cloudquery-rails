@@ -1,14 +1,10 @@
-# frozen_string_literal: true
-
-require_relative "cloudquery/version"
 require 'ffi'
+require 'json'
 
-module CloudqueryRails
-  class Error < StandardError; end
-  # Your code goes here...
-
+# Module that represents shared lib
+module Cloudquery
   extend FFI::Library
-  puts "Here: " + File.dirname(__FILE__) + " | and | " + '/cloudquery.so'
+
   ffi_lib File.dirname(__FILE__) + '/cloudquery.so'
 
   # define class String to map:
@@ -26,7 +22,17 @@ module CloudqueryRails
 
   # foreign function definitions
   attach_function :QueryAWS,
-                  [String.by_value, String.by_value],
+                  [String.by_value],
                   :int
+
+
+  def aws(aws_json)
+    json_string = JSON.generate(aws_json)
+    c_string = Cloudquery::String.new(json_string)
+    Cloudquery.QueryAWS(c_string)
+  end
+
+  # Accessible functions
+  module_function :aws
 
 end

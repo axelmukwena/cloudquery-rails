@@ -29,10 +29,8 @@ Gem::Specification.new do |spec|
   end
 
   # Add Go dependant files
-  spec.files += Dir['lib/cloudquery.go']
   spec.files += Dir['lib/cloudquery.so']
   spec.files += Dir['lib/cloudquery.h']
-  spec.files += Dir['lib/go.mod']
 
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
