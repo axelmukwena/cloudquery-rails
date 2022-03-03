@@ -1,12 +1,14 @@
 PATH
   remote: .
   specs:
-    cloudquery_rails (0.1.0)
+    cloudquery (0.1.0)
+      ffi (~> 1.15.5)
 
 GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
+    ffi (1.15.5)
     minitest (5.15.0)
     parallel (1.21.0)
     parser (3.1.1.0)
@@ -33,7 +35,7 @@ PLATFORMS
   x86_64-darwin-19
 
 DEPENDENCIES
-  cloudquery_rails!
+  cloudquery!
   minitest (~> 5.0)
   rake (~> 13.0)
   rubocop (~> 1.21)
