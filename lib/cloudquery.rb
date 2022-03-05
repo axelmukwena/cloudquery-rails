@@ -21,10 +21,11 @@ module Cloudquery
   end
 
   # foreign function definitions
+
+  # ----------------- AWS -----------------
   attach_function :QueryAWS,
                   [String.by_value],
                   :int
-
 
   def aws(aws_json)
     json_string = JSON.generate(aws_json)
@@ -32,7 +33,17 @@ module Cloudquery
     Cloudquery.QueryAWS(c_string)
   end
 
-  # Accessible functions
-  module_function :aws
+  # ----------------- GCP -----------------
+  attach_function :QueryGCP,
+                  [String.by_value],
+                  :int
+
+  def gcp(json_string)
+    c_string = Cloudquery::String.new(json_string)
+    Cloudquery.QueryGCP(c_string)
+  end
+
+  # module functions
+  module_function :aws, :gcp
 
 end

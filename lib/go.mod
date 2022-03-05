@@ -1,3 +1,3 @@
-module cloudquery-wrapper/main
+module cloudquery
 
 go 1.17

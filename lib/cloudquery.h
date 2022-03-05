@@ -68,9 +68,8 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
-
-// Main AWS function exported to Ruby
 extern GoInt QueryAWS(GoString awsString);
+extern GoInt QueryGCP(GoString gcpString);
 
 #ifdef __cplusplus
 }
