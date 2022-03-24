@@ -43,11 +43,23 @@ Or install it yourself as:
 
 ## Getting started
 
+
+_**You are required to add the following to your machine's host user `.profile` file:**_
+
+```shell
+if test -f "$HOME/.cloudquery-rails"; then
+	. ~/.cloudquery-rails
+fi
+```
+
+It simply checks if the `.cloudquery-rails` file exists. If it does, its entire content (environment variables), is loaded into the `.profile` file.
+
+
 ### AWS
 
 ---
 
-For this provider, a `credentials` and a `config` file are generated at the users root directory: `Users/username/.aws/credentials` and `Users/username/.aws/config`.
+For this provider, a `credentials` and a `config` file are automatically generated at the users root directory.
 
 Depending on how you store your credentials, either in `.env` file or in database encrypted column, find below:
 
@@ -60,9 +72,12 @@ aws_credentials = {
   region: @aws_credentials.aws_region,  # default region = us-west-2
 }
 
+# Calling cloudquery fetch aws
+# Requires json/hash argument
 Cloudquery.aws(aws_credentials)
 ```
 
+Generated files:
 
 ```dotenv
 # ~ Users/username/.aws/credentials
@@ -88,6 +103,8 @@ aws_credentials = {
   region: @aws_credentials.aws_region,  # default region = us-west-2
 }
 
+# Calling cloudquery fetch aws
+# Requires json/hash argument
 Cloudquery.aws(aws_credentials)
 ```
 
@@ -111,9 +128,9 @@ You can read up on how AWS consumes credentials [here](https://aws.github.io/aws
 
 ---
 
-Cloudquery uses a credential file which can be obtained from the [Google Cloud Console](https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account). Do make sure a user's Cloud Resource Manager API for `myproject` is enabled by checking the [Resource Manager](https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com).
+GCP credentials can be obtained from the [Google Cloud Console](https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account). Do make sure a user's Cloud Resource Manager API for `myproject` is enabled by checking the [Resource Manager](https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com).
 
-For a multi-user application, you should copy the contents of each `json` credential file and save them in a string column, for instance.
+Copy the entire contents of the `json` credential file and save them in a string column, for instance.
 
 ```json
 {
@@ -130,14 +147,73 @@ For a multi-user application, you should copy the contents of each `json` creden
 }
 ```
 
-You should add the following environment variable, where `username` is your machine's host user to your `.profile` file:
 
-```shell
-# Users/username/.profile
-export GOOGLE_APPLICATION_CREDENTIALS=/Users/username/.gcp/credentials.json
+```ruby
+# Calling cloudquery fetch gcp
+# Requires string argument 
+Cloudquery.gcp(@gcp_credential.credentials)
 ```
 
-The gem will use the variable above as a constant. This gem will generate/replace the `credentials.json` specific to the current user in the location `/Users/username/.gcp/credentials.json` at fly before `cloudquery fetch gcp` is executed.
+### Azure
+
+---
+
+For each azure account, you need to create the service-principle cloudquery will use to access your cloud deployment.
+Please follow these Cloudquery [suggestions](https://docs.cloudquery.io/docs/getting-started/getting-started-with-azure#authenticate-with-azure). You can also create them through the [Azure portal](https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals).
+
+Given the azure credential variables obtained from running the below:
+
+```shell
+$ az ad sp create-for-rbac --name testsp001
+```
+
+You obtain the following:
+```json
+{
+  "appId": "cb799f99-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "displayName": "testsp001",
+  "name": "http://testsp001",
+  "password": "kCxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "tenant": "c4xxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+}
+```
+
+To provide the credentials to the gem:
+
+```ruby
+azure_credentials = {
+  azure_tenant_id: @azure_credentials.azure_tenant_id, # tenant
+  azure_client_id: @azure_credentials.azure_client_id, # appId
+  azure_client_secret: @azure_credentials.azure_client_secret, # password
+  azure_subscription_id: @azure_credentials.azure_subscription_id,
+}
+
+# Call cloudquery fetch aws
+# Requires json/hash argument
+Cloudquery.azure(azure_credentials)
+```
+
+### Digital Ocean
+
+```ruby
+digitalocean_credentials = {
+  digitalocean_access_token: @digitalocean_credential.digitalocean_access_token,
+  digitalocean_token: @digitalocean_credential.digitalocean_token,
+  spaces_access_key_id: @digitalocean_credential.spaces_access_key_id,
+  spaces_secret_access_key: @digitalocean_credential.spaces_secret_access_key,
+}
+
+# Call cloudquery fetch aws
+# Requires json/hash argument
+Cloudquery.digitalocean(digitalocean_credentials)
+```
+
+### Kubernetes
+
+```ruby
+# Requires string argument
+Cloudquery.kubernetes(@kubernetes_credential.credentials)
+```
 
 ### Querying extracted data from Database
 
